@@ -1,0 +1,27 @@
+apps/console/next-env.d.ts
+  s_df78e491ec4d63::t_cae17f23fd1d5d 1-7
+apps/console/package-lock.json
+  s_df78e491ec4d63::t_e35edb764c8711 1-2293
+package-lock.json
+  s_df78e491ec4d63::t_1134fa3708179c 1-4865
+services/control-plane-ts/package-lock.json
+  s_df78e491ec4d63::t_4affe5f3d502f2 1-1703
+services/ops-mcp-ts/package-lock.json
+  s_df78e491ec4d63::t_b7cd022cd1ac38 1-2005
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1944b6679dedcf3e8eff9e109c2f2cedd3b9fa2c",
+  "prompts": {},
+  "sessions": {
+    "s_df78e491ec4d63": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "946ea705-f2a5-4ad0-960e-fabab28baeb0",
+        "model": "copilot/gpt-5.6-sol"
+      },
+      "human_author": "Anindya Bag <93460674+code-anindya-X@users.noreply.github.com>"
+    }
+  }
+}
