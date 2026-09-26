@@ -36,8 +36,8 @@ UPDATE inventory.lots SET zone_id = 'ZONE-PHOTO' WHERE lot_id = 'LOT-0002' AND z
 INSERT INTO inventory.agv_robots
   (robot_id, site_id, name, x, y, heading, battery, state, current_mission_id)
 VALUES
-  ('AGV-ATLAS', 'WH-BLR-01', 'Atlas', 7, 7, 90, 87, 'executing', 'MIS-1042'),
-  ('AGV-MILO', 'WH-BLR-01', 'Milo', 20, 18, 180, 64, 'executing', 'MIS-1043'),
+  ('AGV-ATLAS', 'WH-BLR-01', 'Atlas', 14, 6, 90, 87, 'executing', 'MIS-1042'),
+  ('AGV-MILO', 'WH-BLR-01', 'Milo', 33, 28, 180, 64, 'executing', 'MIS-1043'),
   ('AGV-NOVA', 'WH-BLR-01', 'Nova', 37, 26, 270, 93, 'ready', NULL),
   ('AGV-KITE', 'WH-BLR-01', 'Kite', 51, 35, 0, 38, 'charging', NULL)
 ON CONFLICT (robot_id) DO NOTHING;

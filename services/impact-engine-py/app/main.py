@@ -48,6 +48,19 @@ def route_between(start: dict[str, int], target: dict[str, int]) -> list[dict[st
     return points
 
 
+def position_on_route(route: list[dict[str, int]], progress: int) -> dict[str, int]:
+    if len(route) < 2:
+        return route[0] if route else {"x": 0, "y": 0}
+    scaled = min(100, max(0, progress)) / 100 * (len(route) - 1)
+    segment = min(len(route) - 2, int(scaled))
+    fraction = scaled - segment
+    start, end = route[segment], route[segment + 1]
+    return {
+        "x": round(start["x"] + (end["x"] - start["x"]) * fraction),
+        "y": round(start["y"] + (end["y"] - start["y"]) * fraction),
+    }
+
+
 class ImpactRequest(BaseModel):
     recallId: Annotated[str, Field(min_length=1, max_length=120)]
     lotIds: Annotated[list[str], Field(min_length=1, max_length=100)]
@@ -159,8 +172,8 @@ def _new_demo_state() -> dict[str, Any]:
             {"id": "ZONE-CHARGING", "name": "Charging", "type": "charging", "x": 45, "y": 34, "width": 11, "depth": 4, "color": "#E2E7D6", "inventoryUnits": 0},
         ],
         "robots": [
-            {"id": "AGV-ATLAS", "name": "Atlas", "x": 7, "y": 7, "heading": 90, "battery": 87, "state": "executing", "currentMissionId": "MIS-1042"},
-            {"id": "AGV-MILO", "name": "Milo", "x": 20, "y": 18, "heading": 180, "battery": 64, "state": "executing", "currentMissionId": "MIS-1043"},
+            {"id": "AGV-ATLAS", "name": "Atlas", "x": 14, "y": 6, "heading": 90, "battery": 87, "state": "executing", "currentMissionId": "MIS-1042"},
+            {"id": "AGV-MILO", "name": "Milo", "x": 33, "y": 28, "heading": 180, "battery": 64, "state": "executing", "currentMissionId": "MIS-1043"},
             {"id": "AGV-NOVA", "name": "Nova", "x": 37, "y": 26, "heading": 270, "battery": 93, "state": "ready", "currentMissionId": None},
             {"id": "AGV-KITE", "name": "Kite", "x": 51, "y": 35, "heading": 0, "battery": 38, "state": "charging", "currentMissionId": None},
         ],
@@ -716,11 +729,11 @@ def _tick_memory(steps: int) -> dict[str, Any]:
                 mission = next((item for item in _demo_state["missions"] if item["id"] == robot["currentMissionId"]), None)
                 if not mission or mission["status"] != "active":
                     continue
-                mission["progress"] = min(100, mission["progress"] + 6)
+                mission["progress"] = min(100, mission["progress"] + 2)
                 route = mission["route"]
-                route_index = min(len(route) - 1, int((mission["progress"] / 100) * len(route)))
                 previous_x, previous_y = robot["x"], robot["y"]
-                robot["x"], robot["y"] = route[route_index]["x"], route[route_index]["y"]
+                point = position_on_route(route, mission["progress"])
+                robot["x"], robot["y"] = point["x"], point["y"]
                 if robot["x"] > previous_x:
                     robot["heading"] = 90
                 elif robot["x"] < previous_x:
@@ -765,10 +778,9 @@ def _tick_postgres(steps: int) -> dict[str, Any]:
                 (WAREHOUSE_ID,),
             ).fetchall()
             for row in rows:
-                progress = min(100, row["progress"] + 6)
+                progress = min(100, row["progress"] + 2)
                 route = row["route"]
-                route_index = min(len(route) - 1, int((progress / 100) * len(route)))
-                point = route[route_index]
+                point = position_on_route(route, progress)
                 heading = 90 if point["x"] > row["x"] else 270 if point["x"] < row["x"] else 180 if point["y"] > row["y"] else 0
                 complete = progress == 100
                 stage = "complete" if complete else "packing" if progress >= 75 else "transporting" if progress >= 45 else "picking"
