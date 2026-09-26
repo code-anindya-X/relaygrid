@@ -4,6 +4,14 @@ set -euo pipefail
 exec > >(tee /var/log/relaygrid-bootstrap.log) 2>&1
 export DEBIAN_FRONTEND=noninteractive
 
+if ! swapon --show | grep -q /swapfile; then
+  fallocate -l 4G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  echo '/swapfile none swap sw 0 0' >>/etc/fstab
+fi
+
 apt-get update
 apt-get install -y ca-certificates curl git nginx openjdk-21-jdk python3 python3-venv openssl
 

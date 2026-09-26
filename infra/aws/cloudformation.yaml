@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: RelayGrid single-instance hackathon deployment
+
+Parameters:
+  LatestUbuntuAmi:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id
+  InstanceType:
+    Type: String
+    Default: t3.micro
+    AllowedValues:
+      - t3.micro
+
+Resources:
+  RelayGridSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Public HTTP access to the RelayGrid hackathon demo
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: relaygrid-hackathon-web
+
+  RelayGridInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestUbuntuAmi
+      InstanceType: !Ref InstanceType
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeleteOnTermination: true
+          DeviceIndex: "0"
+          GroupSet:
+            - !GetAtt RelayGridSecurityGroup.GroupId
+      MetadataOptions:
+        HttpEndpoint: enabled
+        HttpTokens: required
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            DeleteOnTermination: true
+            VolumeSize: 30
+            VolumeType: gp3
+      UserData:
+        Fn::Base64: !Sub |
+          #!/usr/bin/env bash
+          set -euo pipefail
+          curl -fsSL https://raw.githubusercontent.com/code-anindya-X/relaygrid/main/infra/aws/ec2-user-data.sh | bash
+      Tags:
+        - Key: Name
+          Value: relaygrid-hackathon
+        - Key: Project
+          Value: RelayGrid
+
+Outputs:
+  InstanceId:
+    Description: RelayGrid EC2 instance ID
+    Value: !Ref RelayGridInstance
+  PublicIp:
+    Description: RelayGrid public IPv4 address
+    Value: !GetAtt RelayGridInstance.PublicIp
+  RelayGridUrl:
+    Description: RelayGrid Console URL
+    Value: !Sub http://${RelayGridInstance.PublicIp}
