@@ -238,3 +238,7 @@ The repository ships with simulated warehouse data and local development credent
 ## AI-assisted development
 
 GitHub Copilot was used during development for implementation support, debugging, and documentation. The team reviewed the generated changes and is responsible for the architecture, code, and demo.
+
+## AWS deployment
+
+The fastest hosted demo path uses a single EC2 instance with only the Console exposed publicly. See [`infra/aws/README.md`](infra/aws/README.md) for the instance settings and reproducible user-data bootstrap.
