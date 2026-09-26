@@ -48,6 +48,7 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => ({})) as Record<string, unknown>;
   const action = typeof body.action === "string" ? body.action : "";
   const pathByAction: Record<string, string> = {
+    tick: "/v1/warehouse/demo/tick",
     toggle: "/v1/warehouse/demo/toggle",
     create_order: "/v1/warehouse/demo/orders",
     inject_anomaly: "/v1/warehouse/demo/anomalies",
@@ -58,10 +59,13 @@ export async function POST(request: Request) {
       ? `/v1/warehouse/robots/${encodeURIComponent(body.robotId)}/actions`
       : pathByAction[action];
     if (!path) return Response.json({ error: "unsupported_action" }, { status: 400 });
+    let upstreamBody: Record<string, unknown> = body;
+    if (action === "robot") upstreamBody = { action: body.command };
+    if (action === "tick") upstreamBody = { steps: 1 };
     const response = await fetch(`${engineBase}${path}`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(action === "robot" ? { action: body.command } : body),
+      body: JSON.stringify(upstreamBody),
       signal: AbortSignal.timeout(1400),
     });
     if (!response.ok) throw new Error(`warehouse engine returned ${response.status}`);

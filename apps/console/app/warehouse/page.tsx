@@ -16,11 +16,20 @@ export default function WarehousePage() {
     if (response.ok) setSnapshot(await response.json());
   }, []);
 
+  const advance = useCallback(async () => {
+    const response = await fetch("/api/warehouse", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ action: "tick" }),
+    });
+    if (response.ok) setSnapshot(await response.json());
+  }, []);
+
   useEffect(() => {
     void refresh();
-    const timer = window.setInterval(() => void refresh(), 1800);
+    const timer = window.setInterval(() => void advance(), 1800);
     return () => window.clearInterval(timer);
-  }, [refresh]);
+  }, [advance, refresh]);
 
   async function act(action: string, extra: Record<string, unknown> = {}) {
     setBusy(action);
