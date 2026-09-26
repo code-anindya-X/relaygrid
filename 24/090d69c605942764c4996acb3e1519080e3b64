@@ -1,0 +1,24 @@
+apps/console/app/warehouse/page.tsx
+  s_df78e491ec4d63::t_2e8e065b3cc420 19-27,30,32
+.gitignore
+  s_df78e491ec4d63::t_98247a2585628f 8
+apps/console/app/api/warehouse/route.ts
+  s_df78e491ec4d63::t_eda5a6195bb818 62-64,68
+  s_df78e491ec4d63::t_2e8e065b3cc420 51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "24090d69c605942764c4996acb3e1519080e3b64",
+  "prompts": {},
+  "sessions": {
+    "s_df78e491ec4d63": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "946ea705-f2a5-4ad0-960e-fabab28baeb0",
+        "model": "copilot/gpt-5.6-sol"
+      },
+      "human_author": "Anindya Bag <93460674+code-anindya-X@users.noreply.github.com>"
+    }
+  }
+}
