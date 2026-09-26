@@ -144,7 +144,7 @@ flowchart LR
 
 RelayGrid exposes 14 purpose-built tools. The two execution tools require explicit TrueForge approval.
 
-**Warehouse and TraceHold**
+### Warehouse and TraceHold
 
 - `get_tracehold_runbook`
 - `warehouse_snapshot`
@@ -155,7 +155,7 @@ RelayGrid exposes 14 purpose-built tools. The two execution tools require explic
 - `prepare_quarantine`
 - `quarantine_lot` — state changing, approval required
 
-**On-call response**
+### On-call response
 
 - `get_oncall_runbook`
 - `oncall_status`
@@ -189,6 +189,14 @@ For the full stack, Proofline should also be healthy:
 ```sh
 curl -fsS http://127.0.0.1:8082/v1/actions/health
 ```
+
+Before presenting, run the strict hackathon readiness gate:
+
+```sh
+npm run verify:hackathon
+```
+
+It verifies every service, PostgreSQL durability, an end-to-end TraceHold approval preview, and the presence of a configured TrueForge model and agent. Use `npm run verify:hackathon -- --services-only` while the model is still being configured.
 
 Optional build checks:
 

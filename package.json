@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "trueforge": "OUTBOUND_URL_ALLOWED_HOSTS='[\"127.0.0.1\",\"localhost\"]' trueforge",
-    "trueforge:bootstrap": "node --env-file-if-exists=.env scripts/bootstrap-trueforge.mjs"
+    "trueforge:bootstrap": "node --env-file-if-exists=.env scripts/bootstrap-trueforge.mjs",
+    "verify:hackathon": "./scripts/verify-hackathon.sh"
   },
   "devDependencies": {
     "@truefoundry/trueforge": "0.2.1"
