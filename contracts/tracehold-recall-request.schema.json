@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TraceHoldRecallRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["recallId", "supplier", "lotIds", "reason"],
+  "properties": {
+    "recallId": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "supplier": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "lotIds": { "type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 120 } },
+    "reason": { "type": "string", "minLength": 5, "maxLength": 2000 }
+  }
+}

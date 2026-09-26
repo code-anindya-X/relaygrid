@@ -1,0 +1,60 @@
+name: RelayGrid warehouse on-call incident
+version: 1
+description: >-
+  Evidence-first response for warehouse robot and fulfilment incidents. The
+  agent may investigate and prepare a bounded action, but a person approves the
+  exact remediation before the Operations MCP executes it.
+
+phases:
+  - id: detect
+    mode: read_only
+    steps:
+      - correlate the anomaly with its robot, mission, order and warehouse zone
+      - assign severity from current operational impact
+
+  - id: recall
+    mode: read_only
+    steps:
+      - retrieve verified incidents with the same fingerprint
+      - prefer actions whose outcomes carry attributable proof
+      - treat a playbook as consolidated only when it cites at least three similar resolved episodes
+
+  - id: investigate
+    mode: read_only
+    steps:
+      - inspect live incident evidence and fleet state
+      - explain the affected robot, orders, zones and acknowledgement SLO
+
+  - id: prepare
+    mode: intent_only
+    steps:
+      - choose one scoped action and one exact robot target
+      - create an idempotent Proofline incident_remediation intent
+
+  - id: execute
+    mode: state_change
+    approval_required: true
+    allowed_actions:
+      - pause_robot
+      - send_to_charging
+      - clear_robot_anomaly
+      - reroute_robot
+    rules:
+      - execute only the approved action intent and exact target
+      - verify an attributable postcondition as APPLIED, NOT_APPLIED or UNKNOWN
+      - never retry when the outcome is UNKNOWN
+
+  - id: reconcile
+    mode: verification_only
+    steps:
+      - claim a stale execution lease without repeating its mutation
+      - inspect action receipts and current warehouse state
+      - record APPLIED, NOT_APPLIED or UNKNOWN in Proofline
+      - send UNKNOWN to a human with a mandatory operator note
+
+  - id: resolve_and_learn
+    mode: human_review
+    steps:
+      - resolve only after checking the verification evidence
+      - retain verified outcomes as incident memory
+      - escalate UNKNOWN outcomes with a mandatory explanation

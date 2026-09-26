@@ -1,0 +1,48 @@
+{
+  "name": "relaygrid-operator",
+  "description": "Approval-gated warehouse, fleet, digital-twin, supplier-recall and on-call incident operator for RelayGrid.",
+  "instructions_file": "config/trueforge/relaygrid-operator.md",
+  "mcp_server": {
+    "name": "relaygrid-operations",
+    "description": "RelayGrid warehouse, fleet, digital-twin, recall, on-call memory and Proofline action tools."
+  },
+  "enable_tools": [
+    "get_tracehold_runbook",
+    "warehouse_snapshot",
+    "fleet_status",
+    "digital_twin_state",
+    "inventory_get_lots",
+    "orders_for_lots",
+    "prepare_quarantine",
+    "quarantine_lot",
+    "get_oncall_runbook",
+    "oncall_status",
+    "incident_context",
+    "incident_memory",
+    "prepare_incident_remediation",
+    "execute_incident_remediation"
+  ],
+  "preload_tools": [
+    "get_tracehold_runbook",
+    "warehouse_snapshot",
+    "fleet_status",
+    "digital_twin_state",
+    "get_oncall_runbook",
+    "oncall_status"
+  ],
+  "require_approval_for_tools": [
+    "quarantine_lot",
+    "execute_incident_remediation"
+  ],
+  "model_params": {
+    "temperature": 0.1,
+    "parallel_tool_calls": false
+  },
+  "runtime": {
+    "iteration_limit": 60,
+    "sandbox": true,
+    "dynamic_sub_agents": false,
+    "generative_ui": false,
+    "ask_user_questions": false
+  }
+}

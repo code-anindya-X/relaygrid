@@ -1,0 +1,54 @@
+name: TraceHold supplier recall containment
+version: 1
+description: >-
+  Human-authored runbook for identifying affected electronics lots and preparing
+  a stock quarantine. The agent may perform read-only investigation and
+  sandboxed analysis. It must pause and obtain an explicit human approval before
+  each state-changing step.
+
+inputs:
+  - recall_id
+  - supplier
+  - lot_ids
+  - reason
+
+steps:
+  - id: inspect_recall
+    action: summarize_notice
+    mode: read_only
+    output: normalized_recall_scope
+
+  - id: inspect_inventory
+    action: inventory_get_lots
+    mode: read_only
+    input: lot_ids
+    output: affected_lot_records
+
+  - id: inspect_orders
+    action: orders_for_lots
+    mode: read_only
+    input: lot_ids
+    output: affected_order_records
+
+  - id: calculate_impact
+    action: execute_generated_analysis
+    mode: disposable_sandbox
+    input:
+      - normalized_recall_scope
+      - affected_lot_records
+      - affected_order_records
+    output: impact_report
+
+  - id: propose_quarantine
+    action: quarantine_lot
+    mode: state_change
+    approval_required: true
+    approval_summary: Explain affected lots, on-hand quantity, order impact, exact changes, and rollback path.
+    execute_via: proofline_then_scoped_mcp
+    verify_after_execution: true
+
+  - id: stop_before_customer_actions
+    action: stop_and_request_follow_up_approval
+    mode: state_change
+    approval_required: true
+    out_of_scope_for_first_slice: true
