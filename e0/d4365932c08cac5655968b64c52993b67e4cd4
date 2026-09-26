@@ -1,0 +1,29 @@
+README.md
+  s_df78e491ec4d63::t_7505c0a85ee484 147,158
+  s_df78e491ec4d63::t_08680284a34cf2 193-200
+package.json
+  s_df78e491ec4d63::t_08680284a34cf2 6-7
+scripts/verify-hackathon.sh
+  s_df78e491ec4d63::t_04ddbe87f7492c 27-55
+  s_df78e491ec4d63::t_f7d202ed471ae4 24-26
+  s_df78e491ec4d63::t_f9bb553d4478e0 56-58
+  s_df78e491ec4d63::t_2f99052acdd03d 1-23,59-67
+.github/workflows/ci.yml
+  s_df78e491ec4d63::t_aea1b289bbcb55 1-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e0d4365932c08cac5655968b64c52993b67e4cd4",
+  "prompts": {},
+  "sessions": {
+    "s_df78e491ec4d63": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "946ea705-f2a5-4ad0-960e-fabab28baeb0",
+        "model": "copilot/gpt-5.6-sol"
+      },
+      "human_author": "Anindya Bag <93460674+code-anindya-X@users.noreply.github.com>"
+    }
+  }
+}
