@@ -4,6 +4,10 @@
   "scripts": {
     "trueforge": "OUTBOUND_URL_ALLOWED_HOSTS='[\"127.0.0.1\",\"localhost\"]' trueforge",
     "trueforge:bootstrap": "node --env-file-if-exists=.env scripts/bootstrap-trueforge.mjs",
+    "trueforge:local-model": "node --env-file-if-exists=.env scripts/setup-trueforge-local-model.mjs",
+    "trueforge:local": "npm run trueforge:local-model && npm run trueforge:bootstrap",
+    "verify:trueforge": "node --env-file-if-exists=.env scripts/verify-trueforge-harness.mjs",
+    "demo:ready": "npm run trueforge:local && npm run verify:hackathon",
     "verify:hackathon": "./scripts/verify-hackathon.sh"
   },
   "devDependencies": {

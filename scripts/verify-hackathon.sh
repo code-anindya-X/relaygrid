@@ -51,17 +51,5 @@ if [[ "$services_only" == "true" ]]; then
   exit 0
 fi
 
-model_count="$(curl --fail --silent --show-error http://localhost:8790/api/v1/models | python3 -c 'import json, sys; print(len(json.load(sys.stdin).get("data", [])))')"
-agent_count="$(curl --fail --silent --show-error http://localhost:8790/api/v1/agents | python3 -c 'import json, sys; print(len(json.load(sys.stdin).get("data", [])))')"
-if ((model_count < 1)); then
-  echo "FAIL  TrueForge has no model. Configure one in Settings -> Models."
-  exit 1
-fi
-if ((agent_count < 1)); then
-  echo "FAIL  TrueForge has no agent. Run: npm run trueforge:bootstrap"
-  exit 1
-fi
-
-printf 'PASS  TrueForge model (%s configured)\n' "$model_count"
-printf 'PASS  TrueForge agent (%s configured)\n' "$agent_count"
+node --env-file-if-exists=.env scripts/verify-trueforge-harness.mjs
 echo "RelayGrid is ready for the hackathon demo."

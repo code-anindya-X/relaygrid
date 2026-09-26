@@ -16,6 +16,22 @@ With TrueForge and the Operations MCP service running, use a second terminal:
 npm run trueforge:bootstrap
 ```
 
+## No-key local model
+
+RelayGrid can provision a local Ollama model without an external API key. Install and start Ollama, then run:
+
+```sh
+ollama serve
+npm run trueforge:local
+npm run verify:trueforge
+```
+
+`trueforge:local` downloads `qwen3:8b` when needed, registers its OpenAI-compatible endpoint as `local-ollama`, and creates or updates `relaygrid-operator`. Override the defaults with `OLLAMA_URL`, `OLLAMA_MODEL`, `TRUEFORGE_LOCAL_PROVIDER`, or `TRUEFORGE_LOCAL_MODEL_ALIAS`.
+
+The verifier checks the exact harness contract: configured model, authenticated MCP connector, all 14 narrow tools, sandbox isolation, disabled parallel tool calls, and approval gates on both state-changing tools.
+
+To chat with the configured harness, open **Agents**, choose `relaygrid-operator`, and click **Try**. The global **New Chat** entry is intentionally generic and does not attach the RelayGrid MCP tool manifest.
+
 The bootstrap is safe to run repeatedly. It creates or replaces the `relaygrid-operations` MCP connector at `http://127.0.0.1:8083/mcp`. It reads `MCP_BEARER_TOKEN` from `.env` and sends the value directly to TrueForge; the token is never written to a generated config file or printed.
 
 The script then reads configured models. It creates or updates the `relaygrid-operator` agent when exactly one model exists, or when `TRUEFORGE_MODEL_NAME` names an available model. When there are zero or multiple models, MCP registration still completes and the script prints the remaining model-selection step.

@@ -491,6 +491,13 @@ const app = express();
 app.use(hostHeaderValidation(allowedHosts));
 app.use(express.json({ limit: "1mb" }));
 app.get("/health", (_request, response) => response.json({ service: "relaygrid-operations-mcp", status: "ok" }));
+app.get("/mcp", (request, response) => {
+  if (mcpBearerToken && request.header("authorization") !== `Bearer ${mcpBearerToken}`) {
+    response.status(401).json({ error: "unauthorized" });
+    return;
+  }
+  response.set("Allow", "POST").status(405).json({ error: "method_not_allowed" });
+});
 app.post("/mcp", async (request, response) => {
   if (mcpBearerToken && request.header("authorization") !== `Bearer ${mcpBearerToken}`) {
     response.status(401).json({ error: "unauthorized" });

@@ -11,7 +11,7 @@ For an on-call alert, follow the human-authored process returned by `get_oncall_
 3. Explain the current evidence, likely cause, proposed bounded remediation, blast radius, and verification signal.
 4. Call `prepare_incident_remediation` to create a durable idempotent intent. This must not mutate the warehouse.
 5. Present the exact incident, target robot, action, idempotency key, and expected verification to the operator.
-6. Call `execute_incident_remediation` only after TrueForge receives explicit human approval for that exact tool call.
+6. When the operator explicitly asks to execute a prepared intent, submit the exact `execute_incident_remediation` tool call immediately. TrueForge will pause the submitted call at its native approval gate before dispatch; do not wait for a second conversational confirmation.
 7. Report the verified result as `APPLIED`, `NOT_APPLIED`, or `UNKNOWN`. Never infer success from a request being accepted.
 8. If the result is `UNKNOWN`, stop and escalate for a human operator note. A later call with the same incident and action intent is reconciliation: the server reads the atomic receipt and current state without repeating the mutation.
 9. Use resolved episodes for future recall. A learned playbook is trustworthy only when it cites committed actions from at least three similar resolved incidents.
@@ -23,7 +23,7 @@ For a supplier recall, execute the human-authored runbook returned by `get_trace
 3. Use the TrueForge sandbox for generated impact-analysis code. Do not place credentials or direct database access in generated code.
 4. Call `prepare_quarantine` once per eligible lot. This records a durable Proofline intent and does not authorize inventory mutation.
 5. Present the exact target, evidence, action, and expected result to the operator.
-6. Call `quarantine_lot` only after TrueForge receives explicit human approval for that exact tool call.
+6. When the operator explicitly asks to execute a prepared intent, submit the exact `quarantine_lot` tool call immediately. TrueForge will pause the submitted call at its native approval gate before dispatch; do not wait for a second conversational confirmation.
 7. Report the persisted verification result. If the result is unknown or verification fails, stop and request reconciliation. Never retry a mutation blindly.
 
 Do not use generic HTTP, SQL, shell, or sandbox code to mutate operational systems. Do not notify customers, refund orders, change routes, dispatch robots, or alter inventory unless a purpose-built tool exists and its required approval has been granted. A recommendation from memory never bypasses Proofline approval.

@@ -35,8 +35,10 @@
     "execute_incident_remediation"
   ],
   "model_params": {
+    "max_tokens": 2048,
     "temperature": 0.1,
-    "parallel_tool_calls": false
+    "parallel_tool_calls": false,
+    "reasoning_effort": "none"
   },
   "runtime": {
     "iteration_limit": 60,

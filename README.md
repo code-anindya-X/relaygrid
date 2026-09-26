@@ -37,7 +37,7 @@ The demo is the fastest way to run RelayGrid from a fresh clone. It uses an in-m
 ### Install and run
 
 ```sh
-git clone https://github.com/hshinglo_cisco/relaygrid.git
+git clone https://github.com/code-anindya-X/relaygrid.git
 cd relaygrid
 ./scripts/setup-local.sh --demo
 ./scripts/demo-up.sh
@@ -71,7 +71,7 @@ The full stack adds PostgreSQL and the Java Proofline service. Action intents, a
 The Gradle wrapper is included and downloads the pinned Gradle distribution on first use; a system Gradle installation is not needed.
 
 ```sh
-git clone https://github.com/hshinglo_cisco/relaygrid.git
+git clone https://github.com/code-anindya-X/relaygrid.git
 cd relaygrid
 ./scripts/setup-local.sh --full
 ./scripts/dev-up.sh
@@ -94,6 +94,25 @@ Production mutations fail closed when required service credentials are missing. 
 
 Both startup modes launch TrueForge and attempt an idempotent bootstrap. The bootstrap always registers the authenticated RelayGrid Operations MCP connector. It creates the `relaygrid-operator` agent only after a model can be selected.
 
+### No-key local harness
+
+With Ollama running, provision the local Qwen model and RelayGrid agent without an external API key:
+
+```sh
+npm run trueforge:local
+npm run verify:trueforge
+```
+
+Before presenting the full durable workflow, use the combined gate:
+
+```sh
+npm run demo:ready
+```
+
+The setup is idempotent: it downloads `qwen3:8b` only when absent, registers the OpenAI-compatible Ollama endpoint, authenticates the RelayGrid MCP connector, and creates or updates `relaygrid-operator`.
+
+### External model provider
+
 1. Open <http://localhost:8790> and configure a model in **Settings → Models**.
 2. If exactly one model exists, run the bootstrap directly. If several exist, first set `TRUEFORGE_MODEL_NAME` in `.env` to the exact model name.
 3. Run:
@@ -104,19 +123,44 @@ Both startup modes launch TrueForge and attempt an idempotent bootstrap. The boo
 
 The bootstrap is safe to run repeatedly. For a hosted TrueForge instance, set `TRUEFORGE_URL`, `TRUEFORGE_API_TOKEN` when authentication is enabled, and `OPS_MCP_PUBLIC_URL` to an HTTPS URL that the hosted service can reach. The full integration guide is in [`docs/trueforge-local.md`](docs/trueforge-local.md).
 
+## TrueForge harness contract
+
+TrueForge is the decision and safety harness, not a decorative chat layer. The checked-in agent manifest and bootstrap enforce the following runtime contract:
+
+| Harness capability | RelayGrid implementation |
+| --- | --- |
+| Agent runtime | `relaygrid-operator` with bounded instructions and a 60-iteration limit |
+| Real-system reach | Authenticated `relaygrid-operations` MCP connector |
+| Tool surface | 14 purpose-built tools; generic mutation tools are excluded |
+| Fast grounding | 6 read-only schemas preloaded before the first model turn |
+| Generated code safety | TrueForge sandbox enabled with operational credentials kept outside generated code |
+| Human control | `quarantine_lot` and `execute_incident_remediation` require native TrueForge approval |
+| Concurrency safety | Parallel tool calls disabled for deterministic action sequencing |
+| Durable authorization | Proofline validates the approved action ID and exact target before mutation |
+| Outcome integrity | Results persist as `APPLIED`, `NOT_APPLIED`, or `UNKNOWN`; unknown writes are never blindly retried |
+
+Run `npm run verify:trueforge` to assert this exact contract against the live TrueForge API. The judge-facing walkthrough and prompts are in [`docs/trueforge-harness-demo.md`](docs/trueforge-harness-demo.md).
+
 ## Architecture
 
 ```mermaid
 flowchart LR
-    Operator[Operator] --> Console[Next.js Console]
-    Console --> Control[TypeScript Control Plane<br/>LangGraph]
-    Console --> MCP[Operations MCP]
-    TrueForge[TrueForge Agent] --> MCP
+    Operator[Human operator] --> Chat[TrueForge chat]
+    Operator --> Console[Next.js console]
+    Model[Local Ollama or hosted model] --> Chat
+    Chat --> Sandbox[TrueForge sandbox]
+    Chat --> Gate{Native tool approval}
+    Gate --> MCP[Authenticated Operations MCP]
+    Console --> Control[TypeScript control plane<br/>LangGraph]
+    Console --> MCP
     Control --> Impact[Python Impact Engine<br/>Digital Twin]
     MCP --> Impact
     MCP --> Proofline[Java Proofline<br/>Action Integrity]
     Impact --> Postgres[(PostgreSQL)]
     Proofline --> Postgres
+    Proofline --> Receipt[Verified action receipt]
+    Receipt --> Chat
+    Receipt --> Console
 ```
 
 | Component | Language | Responsibility | Port |
