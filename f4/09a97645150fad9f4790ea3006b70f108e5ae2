@@ -1,0 +1,26 @@
+infra/aws/ec2-user-data.sh
+  s_df78e491ec4d63::t_7248bcbe31de45 7-14
+infra/aws/cloudformation.yaml
+  s_df78e491ec4d63::t_9c83b2764ee597 33-38
+  s_df78e491ec4d63::t_976f6209c46d76 1-9,11,13-32,39-68
+  s_df78e491ec4d63::t_7248bcbe31de45 10,12
+infra/aws/README.md
+  s_df78e491ec4d63::t_7248bcbe31de45 5,13
+  s_df78e491ec4d63::t_976f6209c46d76 11-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "f409a97645150fad9f4790ea3006b70f108e5ae2",
+  "prompts": {},
+  "sessions": {
+    "s_df78e491ec4d63": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "946ea705-f2a5-4ad0-960e-fabab28baeb0",
+        "model": "copilot/gpt-5.6-sol"
+      },
+      "human_author": "Anindya Bag <93460674+code-anindya-X@users.noreply.github.com>"
+    }
+  }
+}
